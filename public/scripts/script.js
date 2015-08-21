@@ -110,51 +110,45 @@ function initialize_gmaps() {
 
 /////////////////////////////
 
+var markers = [];
 
-function addmarker(latilongi, type) {
+function addmarker(latilongi, type, markerId) {
     var marker = new google.maps.Marker({
         position: latilongi,
         icon: type,
         title: 'new marker',
         draggable: true,
-        map: map
+        map: map,
+        markerId: markerId
     });
     map.setCenter(marker.getPosition())
+    markers.push(marker)
+}
+
+function setMapOnAll(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
 }
 
 
-// var hotelLocation = [40.705137, -74.007624];
-//       var restaurantLocations = [
-//         [40.705137, -74.013940],  
-//         [40.708475, -74.010846]
-//       ];
-//       var activityLocations = [
-//         [40.716291, -73.995315],
-//         [40.707119, -74.003602]
-//       ];
+function clearMarkers() {
+  setMapOnAll(null);
+}
 
-//       function drawLocation (location, opts) {
-//         if (typeof opts !== 'object') {
-//           opts = {}
-//         }
-//         opts.position = new google.maps.LatLng(location[0], location[1]);
-//         opts.map = map;
-//         var marker = new google.maps.Marker(opts);
-//       }
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
+}
 
-//       drawLocation(hotelLocation, {
-//         icon: '/images/lodging_0star.png'
-//       });
-//       restaurantLocations.forEach(function (loc) {
-//         drawLocation(loc, {
-//           icon: '/images/restaurant.png'
-//         });
-//       });
-//       activityLocations.forEach(function (loc) {
-//         drawLocation(loc, {
-//           icon: '/images/star-3.png'
-//         });
-//       });
+function deleteOneMarker(input) {
+  input = input.substr(0,input.length-1)
+  markers.forEach(function (marker) {
+    if (marker.markerId === input) {
+      marker.setMap(null);
+    }
+  });
+};
 
 ////////////////////////////
 var selBtn = function() {
@@ -175,14 +169,16 @@ $('.btn-hotel').click(function() {
       selection = all_hotels[i];
     }
   }
-  $('#hotels').append(gS +selection.name + gS2 );
+  $('#hotels').append(gS +selection.name + gS2 ).data(selection.name, selection)
+
   var myLatlng = new google.maps.LatLng(selection.place[0].location[0],selection.place[0].location[1])
   var icon = '/images/lodging_0star.png'
-     addmarker(myLatlng,icon);
+  var markerId = selection.name;
+     addmarker(myLatlng,icon,markerId);
 
 
 });
-
+  
 
 
 $('.btn-rest').click(function() {
@@ -193,11 +189,11 @@ $('.btn-rest').click(function() {
       selection = all_restaurants[i];
     }
   }
-  $('#restuarants').append(gS +selection.name + gS2 );
-      console.log(selection.place[0].location)
+  $('#restuarants').append(gS +selection.name + gS2 )
      var myLatlng2 = new google.maps.LatLng(selection.place[0].location[0],selection.place[0].location[1])
      var icon = '/images/restaurant.png'
-     addmarker(myLatlng2,icon);
+     var markerId = selection.name;
+     addmarker(myLatlng2,icon,markerId);
 });
 
 
@@ -215,32 +211,33 @@ $('.btn-act').click(function() {
   $('#activities').append(gS + selection.name + gS2 );
 var myLatlng3 = new google.maps.LatLng(selection.place[0].location[0],selection.place[0].location[1])
   var icon = '/images/star-3.png'
-     addmarker(myLatlng3,icon);
+     var markerId = selection.name;
+     addmarker(myLatlng3,icon,markerId);
 
 });
 
 
 
 $(document).on("click", ".remove", function() {
+  console.log($(this).parent().data())
   $(this).parent().remove()
-
+  deleteOneMarker($(this).parent().text())
 });
 
 $('.adder-btn').click(function() {
 
   var addTo = $(this).prev()
   var nextDay = Number(addTo.text()) + 1;
-  console.log(nextDay);
-  addTo.after('<button class="btn btn-circle day-btn">' + nextDay + '</button>')
+  addTo.after('<button class="day-clicker btn btn-circle day-btn">' + nextDay + '</button>')
 
 })
 
-
-$(document).on("click", ".day-btn", function() {
-  $(this).addClass('current-day')
+$(document).on("click", ".day-clicker", function() {
+  $(this).addClass('current-day');
+  $(this).siblings().removeClass('current-day');
 
 });
 
 
 
-//adadasdasd
+
