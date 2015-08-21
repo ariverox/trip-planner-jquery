@@ -108,7 +108,7 @@ function initialize_gmaps() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 var markers = [];
 
@@ -235,9 +235,36 @@ $('.adder-btn').click(function() {
 $(document).on("click", ".day-clicker", function() {
   $(this).addClass('current-day');
   $(this).siblings().removeClass('current-day');
-  $('#day-title').html('<span>' + "Day " + $(this).text() + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></span>')
+  $('#day-title').html('<span>' + "Day " + $(this).text() + " " +'</span><button class="btn btn-xs btn-danger remove_day btn-circle">x</button></span>')
+  clearMarkers();
 });
 
+$(document).on("click", ".remove_day", function() {
+  var text = Number($(this).prev().text().substr(3)) 
+  var i=1;
+  if(text >= 0) {
+ $('#day-title').html('<span>' + "Day " + text + " " +'</span><button class="btn btn-xs btn-danger remove_day btn-circle">x</button></span>')
+ $('.day-buttons').children().removeClass('current-day')
+    if($('.day-buttons :nth-child(' + (text+1) + ')').text() !== '+') {
+ $('.day-buttons :nth-child(' + (text+1) + ')').remove()
+ $('.day-buttons').children().removeClass('current-day')
+ $('.day-buttons').children().each(function() {
+  if($(this).text() === '+') return;
+  $(this).html(i)
+  i++
 
-
-
+ })
+ 
+  
+}else if($('.day-buttons :nth-child(' + (text+1) + ')').text() === '+'){
+  $('.day-buttons :nth-child(' + (text) + ')').remove()
+  $('.day-buttons').children().each(function() {
+  if($(this).text() === '+') return;
+  $(this).html(i)
+  i++
+})
+  $('#day-title').html('<span>' + "Day " + (text-1) + " " +'</span><button class="btn btn-xs btn-danger remove_day btn-circle">x</button></span>')
+}
+$('.day-buttons :nth-child(' + text + ')').addClass('current-day')
+};
+})
