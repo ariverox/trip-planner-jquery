@@ -219,10 +219,10 @@ var myLatlng3 = new google.maps.LatLng(selection.place[0].location[0],selection.
 
 
 $(document).on("click", ".remove", function() {
-  console.log($(this).parent().data())
   $(this).parent().remove()
   deleteOneMarker($(this).parent().text())
 });
+
 
 $('.adder-btn').click(function() {
 
@@ -235,7 +235,7 @@ $('.adder-btn').click(function() {
 $(document).on("click", ".day-clicker", function() {
   $(this).addClass('current-day');
   $(this).siblings().removeClass('current-day');
-
+  $('#day-title').html('<span>' + "Day " + $(this).text() + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></span>')
 });
 
 
